@@ -2,6 +2,7 @@ import os
 from os.path import expanduser, join
 import sys
 import json
+import getpass
 
 USER_HOME = expanduser("~")
 
@@ -17,7 +18,10 @@ class Config:
         self.config_home = join(self.user_home, '.jenkins_file_cli')
         self.config_file = join(self.config_home, 'config.json')
         self.jar_libs = join(self.user_home, 'jar_libs')
-    
+
+        os.makedirs(self.config_home, exist_ok=True, mode=0o755)
+        os.makedirs(self.jar_libs, exist_ok=True, mode=0o755)
+        
     def set(self, path: str, value):
         config = self._load_config()
         keys = path.split('.')
@@ -39,10 +43,33 @@ class Config:
 
     def show(self):
         print(self._read_config())
+        
 
-    def _init(self):
-        os.makedirs(self.config_home, exist_ok=True, mode=0o755)
-        os.makedirs(self.jar_libs, exist_ok=True, mode=0o755)
+    
+    @property
+    def username(self):
+        return os.environ.get('JENKINS_USERNAME', self.get('user.name'))
+    
+    @property
+    def token(self):
+        return os.environ.get('JENKINS_TOKEN', self.get('user.token')) or getpass.getpass()
+    
+    
+    @property
+    def job_dsl_core_path(self):
+        return os.environ.get('JENKINS_JOB_DSL_PATH', join(self.jar_libs, 'job-dsl-core-standalone.jar'))
+
+    @property
+    def jenkins_url(self):
+        return self.get('jenkins.url') or 'http://localhost:8080'
+
+    @property
+    def jenkins_cli_download_url(self):
+        return '{}/jnlpJars/jenkins-cli.jar'.format(self.jenkins_url.rstrip('/'))
+    
+    @property
+    def jenkins_cli_path(self):
+        return os.environ.get('JENKINS_CLI_PATH', join(self.jar_libs, 'jenkins-cli.jar'))
 
     def _read_config(self):
         try: 
@@ -67,6 +94,4 @@ class Config:
             json.dump(config, fp, sort_keys=True, indent=2)
         # use file mode 600 as token is save in it
         os.chmod(self.config_file, 0o600)
-    
-    
     
