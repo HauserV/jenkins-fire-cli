@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "jenkins-fire-cli"
+version = "0.1.0"
+description = ""
+authors = ["weihong.xu <xuweihong.cn@gmail.com>"]
+readme = "README.md"
+packages = [{include = "jenkins_fire_cli"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
