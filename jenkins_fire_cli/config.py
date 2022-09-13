@@ -17,23 +17,32 @@ class Config:
         self.config_home = join(self.user_home, '.jenkins_file_cli')
         self.config_file = join(self.config_home, 'config.json')
         self.jar_libs = join(self.user_home, 'jar_libs')
-
-    def init(self):
-        os.makedirs(self.config_home, exist_ok=True, mode=0o755)
-        os.makedirs(self.jar_libs, exist_ok=True, mode=0o755)
     
     def set(self, path: str, value):
         config = self._load_config()
         keys = path.split('.')
 
-        sub_config = config
+        next_config = config
         for key in keys[:-1]:
-            sub_config = sub_config.setdefault(key, dict())
-        sub_config[keys[-1]] = value
+            next_config = next_config.setdefault(key, dict())
+        next_config[keys[-1]] = value
         self._write_config(config)
+    
+    def get(self, path: str):
+        config = self._load_config()
+        next_config = config
+        for key in path.split('.'):
+            if type(next_config) is not dict:
+                break
+            next_config = next_config.get(key, None)
+        return next_config
 
     def show(self):
         print(self._read_config())
+
+    def _init(self):
+        os.makedirs(self.config_home, exist_ok=True, mode=0o755)
+        os.makedirs(self.jar_libs, exist_ok=True, mode=0o755)
 
     def _read_config(self):
         try: 

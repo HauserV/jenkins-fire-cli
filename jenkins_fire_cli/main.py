@@ -3,7 +3,7 @@ from fire import Fire
 
 
 config = Config()
-config.init()
+config._init()
 
 
 if __name__ == '__main__':
