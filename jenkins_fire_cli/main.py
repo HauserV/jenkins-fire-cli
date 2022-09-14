@@ -12,11 +12,15 @@ class Entry:
 
     def __init__(self, config: Config):
         self.config = config
-    
+
     @property
     def jenkins_cli_base_cmd(self):
-        return ["java", "-jar",  self.config.jenkins_cli_path, "-s", self.config.jenkins_url,  "-webSocket"]
+        return ["java", "-jar", self.config.jenkins_cli_path, "-s", self.config.jenkins_url,  "-webSocket"]
     
+    @property
+    def job_dsl_base_cmd(self):
+        return ["java", "-jar", self.config.job_dsl_core_path, '-j']
+
     @property
     def jenkins_env(self):
         env = os.environ.copy()
@@ -24,11 +28,14 @@ class Entry:
         env['JENKINS_API_TOKEN'] = self.config.token
         return env
 
-    # TODO: currently fire doesn't support pass raw arguments, so the command should pass as string 
+    # TODO: currently fire doesn't support pass raw arguments, so the command should pass as string
     # ref: https://github.com/google/python-fire/issues/403
-
     def run(self, cmd: str):
-        sp.call(self.jenkins_cli_base_cmd + shlex.split(cmd), env=self.jenkins_env)
+        sp.call(self.jenkins_cli_base_cmd +
+                shlex.split(cmd), env=self.jenkins_env)
+
+    def dsl(self, file: str):
+        sp.call(self.job_dsl_base_cmd + [file])
 
     def init(self, jenkins_cli_url: str = None, jenkins_job_dsl_core_url: str = None, force_download=False):
         self._download_job_dsl_core(jenkins_job_dsl_core_url, force_download)
@@ -57,7 +64,7 @@ class Entry:
             return
         print('Download {} to {} ...'.format(url, target))
         urlretrieve(url, target)
-    
+
 
 if __name__ == '__main__':
     config = Config()
