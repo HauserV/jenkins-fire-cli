@@ -14,15 +14,14 @@ class Commands:
         self._download_job_dsl_core(jenkins_job_dsl_core_url, force_download)
         self._download_jenkins_cli(jenkins_cli_url, force_download)
 
-    def _get_latest_job_dsl_core_version(self):
+    def _get_job_dsl_core_release_version(self):
         url = 'https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/job-dsl-core/maven-metadata.xml'
         with urlopen(url) as fp:
             tree = ET.parse(fp)
         return tree.find('./versioning/release').text
 
     def _download_job_dsl_core(self, url: str = None, force_download=False):
-        # TODO: read latest version from
-        version = self._get_latest_job_dsl_core_version()
+        version = self._get_job_dsl_core_release_version()
         url = url or 'https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/job-dsl-core/{version}/job-dsl-core-{version}-standalone.jar'.format(
             version=version)
         target = self.config.job_dsl_core_path
