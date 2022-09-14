@@ -21,7 +21,7 @@ class Config:
 
         os.makedirs(self.config_home, exist_ok=True, mode=0o755)
         os.makedirs(self.jar_libs, exist_ok=True, mode=0o755)
-        
+
     def set(self, path: str, value):
         config = self._load_config()
         keys = path.split('.')
@@ -31,7 +31,7 @@ class Config:
             next_config = next_config.setdefault(key, dict())
         next_config[keys[-1]] = value
         self._write_config(config)
-    
+
     def get(self, path: str):
         config = self._load_config()
         next_config = config
@@ -43,41 +43,38 @@ class Config:
 
     def show(self):
         print(self._read_config())
-        
 
-    
     @property
     def username(self):
-        return os.environ.get('JENKINS_USERNAME', self.get('user.name'))
-    
+        return os.environ.get('JENKINS_USER_ID', self.get('user.name'))
+
     @property
     def token(self):
-        return os.environ.get('JENKINS_TOKEN', self.get('user.token')) or getpass.getpass()
-    
-    
+        return os.environ.get('JENKINS_API_TOKEN', self.get('user.token')) or getpass.getpass()
+
     @property
     def job_dsl_core_path(self):
         return os.environ.get('JENKINS_JOB_DSL_PATH', join(self.jar_libs, 'job-dsl-core-standalone.jar'))
 
     @property
     def jenkins_url(self):
-        return self.get('jenkins.url') or 'http://localhost:8080'
+        return os.environ.get('JENKINS_URL', self.get('jenkins.url')) or 'http://localhost:8080'
 
     @property
     def jenkins_cli_download_url(self):
         return '{}/jnlpJars/jenkins-cli.jar'.format(self.jenkins_url.rstrip('/'))
-    
+
     @property
     def jenkins_cli_path(self):
         return os.environ.get('JENKINS_CLI_PATH', join(self.jar_libs, 'jenkins-cli.jar'))
 
     def _read_config(self):
-        try: 
+        try:
             with open(self.config_file, 'r', encoding='utf-8') as fp:
                 return fp.read()
         except FileNotFoundError:
             return ''
-    
+
     def _load_config(self):
         s = self._read_config()
         if not s:
@@ -94,4 +91,3 @@ class Config:
             json.dump(config, fp, sort_keys=True, indent=2)
         # use file mode 600 as token is save in it
         os.chmod(self.config_file, 0o600)
-    

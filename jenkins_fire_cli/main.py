@@ -1,14 +1,34 @@
 from .config import Config
-from fire import Fire
+import fire
 from urllib.request import urlretrieve, urlopen
+import os
 import os.path
 import xml.etree.ElementTree as ET
+import subprocess as sp
+import shlex
 
 
-class Commands:
+class Entry:
 
     def __init__(self, config: Config):
         self.config = config
+    
+    @property
+    def jenkins_cli_base_cmd(self):
+        return ["java", "-jar",  self.config.jenkins_cli_path, "-s", self.config.jenkins_url,  "-webSocket"]
+    
+    @property
+    def jenkins_env(self):
+        env = os.environ.copy()
+        env['JENKINS_USER_ID'] = self.config.username
+        env['JENKINS_API_TOKEN'] = self.config.token
+        return env
+
+    # TODO: currently fire doesn't support pass raw arguments, so the command should pass as string 
+    # ref: https://github.com/google/python-fire/issues/403
+
+    def run(self, cmd: str):
+        sp.call(self.jenkins_cli_base_cmd + shlex.split(cmd), env=self.jenkins_env)
 
     def init(self, jenkins_cli_url: str = None, jenkins_job_dsl_core_url: str = None, force_download=False):
         self._download_job_dsl_core(jenkins_job_dsl_core_url, force_download)
@@ -37,9 +57,9 @@ class Commands:
             return
         print('Download {} to {} ...'.format(url, target))
         urlretrieve(url, target)
-
+    
 
 if __name__ == '__main__':
     config = Config()
-    entry = Commands(config)
-    Fire(entry)
+    entry = Entry(config)
+    fire.Fire(entry)
