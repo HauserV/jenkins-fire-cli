@@ -6,6 +6,7 @@ import os.path
 import xml.etree.ElementTree as ET
 import subprocess as sp
 import shlex
+import webbrowser
 
 
 class Entry:
@@ -33,6 +34,12 @@ class Entry:
     def run(self, cmd: str):
         sp.call(self.jenkins_cli_base_cmd +
                 shlex.split(cmd), env=self.jenkins_env)
+    
+    def doc(self, open=False):
+        url = "{}/manage/cli/".format(self.config.jenkins_url)
+        print(url)
+        if open:
+            webbrowser.open(url)
 
     def dsl(self, file: str):
         sp.call(self.job_dsl_base_cmd + [file])
@@ -40,7 +47,7 @@ class Entry:
     def init(self, jenkins_cli_url: str = None, jenkins_job_dsl_core_url: str = None, force_download=False):
         self._download_job_dsl_core(jenkins_job_dsl_core_url, force_download)
         self._download_jenkins_cli(jenkins_cli_url, force_download)
-
+    
     def _get_job_dsl_core_release_version(self):
         url = 'https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/job-dsl-core/maven-metadata.xml'
         with urlopen(url) as fp:

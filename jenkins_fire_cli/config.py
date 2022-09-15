@@ -15,9 +15,9 @@ class Config:
 
     def __init__(self, user_home=USER_HOME):
         self.user_home = user_home
-        self.config_home = join(self.user_home, '.jenkins_file_cli')
+        self.config_home = join(self.user_home, '.jenkins-fire-cli')
         self.config_file = join(self.config_home, 'config.json')
-        self.jar_libs = join(self.user_home, 'jar_libs')
+        self.jar_libs = join(self.config_home, 'jar_libs')
 
         os.makedirs(self.config_home, exist_ok=True, mode=0o755)
         os.makedirs(self.jar_libs, exist_ok=True, mode=0o755)
@@ -58,11 +58,12 @@ class Config:
 
     @property
     def jenkins_url(self):
-        return os.environ.get('JENKINS_URL', self.get('jenkins.url')) or 'http://localhost:8080'
+        url = os.environ.get('JENKINS_URL', self.get('jenkins.url')) or 'http://localhost:8080'
+        return url.rstrip('/')
 
     @property
     def jenkins_cli_download_url(self):
-        return '{}/jnlpJars/jenkins-cli.jar'.format(self.jenkins_url.rstrip('/'))
+        return '{}/jnlpJars/jenkins-cli.jar'.format(self.jenkins_url)
 
     @property
     def jenkins_cli_path(self):
