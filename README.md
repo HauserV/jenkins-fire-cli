@@ -35,7 +35,7 @@ jenkins-fire-cli init
 
 ### Run jenkins-cli commnads
 As `jenkins-fire-cli` is a wrapper of `jenkins-cli` and `job-dsl-core` to make them easier to use, 
-you can find the document of `jenkins-cli` in your Jenkins site or run the following command to open in browser.
+you can find the document of `jenkins-cli` in your Jenkins site or run the following command to open it in browser.
 
 ```bash
 jenkins-fire-cli doc --open
@@ -81,7 +81,7 @@ jenkins-fire-cli dsl /tmp/sample-dsl.groovy
 ```
 
 Then you will find a file named `job-dsl-plugin.xml` is generated. 
-Now you can run anthor command to create this job in jenkins:
+Now you can run another command to create this job in jenkins:
 
 ```bash
 jenkins-file-cli run 'create-job job-dsl-plugin' < job-dsl-plugin.xml
