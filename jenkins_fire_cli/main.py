@@ -73,7 +73,11 @@ class Entry:
         urlretrieve(url, target)
 
 
-if __name__ == '__main__':
+def main():
     config = Config()
     entry = Entry(config)
     fire.Fire(entry)
+
+    
+if __name__ == '__main__':
+    main()
