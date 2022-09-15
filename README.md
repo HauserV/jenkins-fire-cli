@@ -22,6 +22,9 @@ jenkins-fire-cli config set user.name john.doe
 # user.token is optional, but you will be asked to type it when it is missing
 # either api token or user's password will be OK, but it's recommneded to use token for the sake of security
 jenkins-fire-cli config set user.token passw0rd 
+
+# check configuration by running
+jenkins-fire-cli config show
 ```
 
 Before you start to run Jenkins commands, don't forget to run the `init` command for the first time, which will download `jenkins-cli.jar` and `job-dsl-core-standalone.jar` automatically.
