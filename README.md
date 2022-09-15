@@ -33,7 +33,7 @@ Before you start to run Jenkins commands, don't forget to run the `init` command
 jenkins-fire-cli init
 ```
 
-### Run jenkins-cli commnads
+### Run jenkins-cli commands
 As `jenkins-fire-cli` is a wrapper of `jenkins-cli` and `job-dsl-core` to make them easier to use, 
 you can find the document of `jenkins-cli` in your Jenkins site or run the following command to open it in browser.
 
