@@ -18,8 +18,10 @@ You need to set Jenkins site url and user credential for the first time
 ```bash
 jenkins-fire-cli config set jenkins.url http://your-jenkins-site
 jenkins-fire-cli config set user.name john.doe
-jenkins-fire-cli config set user.token passw0rd  # Optional, you will be asked to input passwod when token is missing
-# Either api token or user's password will be OK, but it's recommneded to use token for the sake of security
+
+# user.token is optional, but you will be asked to type it when it is missing
+# either api token or user's password will be OK, but it's recommneded to use token for the sake of security
+jenkins-fire-cli config set user.token passw0rd 
 ```
 
 Before you start to run Jenkins commands, don't forget to run the `init` command for the first time, which will download `jenkins-cli.jar` and `job-dsl-core-standalone.jar` automatically.
@@ -83,3 +85,13 @@ jenkins-file-cli run 'create-job job-dsl-plugin' < job-dsl-plugin.xml
 ```
 
 Then you will find a new job named `job-dsl-plugin` has been created in jenkins.
+
+### Environment Variables
+
+If you want to use this tool in CI system, you may use the following environment variable instead of global setting.
+
+* `JENKINS_USER_ID`: equivalent to `user.name`
+* `JENKINS_API_TOKEN`: equvalent to `user.token`
+* `JENKINS_URL`: equvalent to `jenkins.url`
+* `JENKINS_JOB_DSL_PATH`: path to the job-dsl jar package, you may skip `init` when this is set 
+* `JNEKINS_CLI_PATH`: path to the jenkins-cli jar package, you may skip `init` when this is set 
